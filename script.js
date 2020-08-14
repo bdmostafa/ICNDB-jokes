@@ -18,26 +18,37 @@
 const display = document.getElementById('display');
 const listUlElement = document.querySelector('.action-list');
 const countBtn = document.getElementById('countBtn');
-// const generateBtn = document.getElementById('generateBtn');
+const categoriesBtn = document.getElementById('categoriesBtn');
+const generateBtn = document.getElementById('generateBtn');
+const generateLatestBtn = document.getElementById('generateLatestBtn')
 const howManyBtn = document.getElementById('howManyBtn');
-// const goBtn = document.getElementById('goBtn');
 const addNameBtn = document.getElementById('addNameBtn');
-// const specificBtn = document.getElementById('specificBtn');
-// const categoriesBtn = document.getElementById('categoriesBtn');
+const specificBtn = document.getElementById('specificBtn');
+
 
 
 // Event Listeners
-listUlElement.addEventListener('click', (e) => {
-    const targetEventBtnId = e.target.previousElementSibling.id;
-    const targetEventInputId = e.target.previousElementSibling.children[0].id;
-    console.log(targetEventInputId)
-    if (targetEventBtnId === 'countBtn') getCountNumber();
-    if (targetEventBtnId === 'categoriesBtn') getCategories();
-    if (targetEventBtnId === 'generateBtn') generateRandomJoke();
-    if (targetEventBtnId === 'generateLatestBtn') generateLatestJoke();
-    if (targetEventInputId === 'howManyBtn') getJokesAsDemand();
-    if (targetEventInputId === 'addNameBtn') addNameInJokes();
-})
+// listUlElement.addEventListener('click', (e) => {
+//     const targetEventBtnId = e.target.previousElementSibling.id;
+//     // console.log(targetEventBtnId)
+//     const targetEventInputId = e.target.previousElementSibling.children[0].id;
+//     // console.log(targetEventInputId)
+//     if (targetEventBtnId === 'countBtn') getCountNumber();
+//     if (targetEventBtnId === 'categoriesBtn') getCategories();
+//     if (targetEventBtnId === 'generateBtn') generateRandomJoke();
+//     if (targetEventBtnId === 'generateLatestBtn') generateLatestJoke();
+//     if (targetEventInputId === 'howManyBtn') getJokesAsDemand();
+//     if (targetEventInputId === 'addNameBtn') addNameInJokes();
+//     if (targetEventInputId === 'specificBtn') getSpecificJoke();
+// })
+
+countBtn.addEventListener('click', getCountNumber);
+categoriesBtn.addEventListener('click', getCategories);
+generateBtn.addEventListener('click', generateRandomJoke);
+generateLatestBtn.addEventListener('click', generateLatestJoke);
+addNameBtn.addEventListener('click', addNameInJokes);
+howManyBtn.addEventListener('click', getJokesAsDemand);
+specificBtn.addEventListener('click', getSpecificJoke);
 
 
 
@@ -101,9 +112,17 @@ async function getJokesAsDemand() {
 }
 
 async function addNameInJokes() {
-    const name = addNameBtn.value;
-    const joke = await fetch(`http://api.icndb.com/jokes/random?firstName=${name}`)
+    const youName = addNameBtn.value;
+    const joke = await fetch(`http://api.icndb.com/jokes/random?firstName=${youName}`)
         .then(data => data.json());
     // console.log(joke.value.joke)
+    display.innerText = joke.value.joke;
+}
+
+async function getSpecificJoke() {
+    const jokeNo = specificBtn.value;
+    const joke = await fetch(`http://api.icndb.com/jokes/${jokeNo}`)
+        .then(data => data.json());
+    // console.log(joke.value)
     display.innerText = joke.value.joke;
 }
