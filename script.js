@@ -19,7 +19,7 @@ const display = document.getElementById('display');
 const listUlElement = document.querySelector('.action-list');
 const countBtn = document.getElementById('countBtn');
 // const generateBtn = document.getElementById('generateBtn');
-// const howManyBtn = document.getElementById('howManyBtn');
+const howManyBtn = document.getElementById('howManyBtn');
 // const goBtn = document.getElementById('goBtn');
 // const addNameBtn = document.getElementById('addNameBtn');
 // const specificBtn = document.getElementById('specificBtn');
@@ -28,12 +28,14 @@ const countBtn = document.getElementById('countBtn');
 
 // Event Listeners
 listUlElement.addEventListener('click', (e) => {
-    const targetEventId = e.target.previousElementSibling.id
-    console.log(targetEventId)
-    if (targetEventId === 'countBtn') getCountNumber();
-    if (targetEventId === 'categoriesBtn') getCategories();
-    if (targetEventId === 'generateBtn') generateRandomJoke();
-    if (targetEventId === 'generateLatestBtn') generateLatestJoke();
+    const targetEventBtnId = e.target.previousElementSibling.id;
+    const targetEventInputId = e.target.previousElementSibling.children[0].id;
+    console.log(e.target.previousElementSibling.children[0].id)
+    if (targetEventBtnId === 'countBtn') getCountNumber();
+    if (targetEventBtnId === 'categoriesBtn') getCategories();
+    if (targetEventBtnId === 'generateBtn') generateRandomJoke();
+    if (targetEventBtnId === 'generateLatestBtn') generateLatestJoke();
+    if (targetEventInputId === 'howManyBtn') getJokesAsDemand();
 })
 
 
@@ -71,9 +73,28 @@ async function generateRandomJoke() {
 async function generateLatestJoke() {
     const latestJokes = await fetch('http://api.icndb.com/jokes/latest')
         .then(data => data.json());
-    console.log(latestJokes.value.length)
+    // console.log(latestJokes.value.length)
     // As there are many value, generate random between value.length
     let randomNum = Math.floor(Math.random() * (latestJokes.value.length - 0 + 1)) + 0;
     // console.log(randomNum)
     display.innerText = latestJokes.value[randomNum].joke;
+}
+
+async function getJokesAsDemand() {
+    // console.log(howManyBtn.value)
+    const value = howManyBtn.value;
+    const jokes = await fetch(`https://api.icndb.com/jokes/random/${value}`)
+        .then(data => data.json());
+    // console.log(jokes.value[0].joke);
+    let displayJokes = [];
+    // Display all the jokes with serial index no
+    jokes.value.forEach((joke, index) => {
+        displayJokes.push(`
+        Joke: ${index + 1}
+        <br>
+        ${joke.joke}
+        <hr>
+        `);
+    })
+    display.innerHTML = displayJokes.join(' ');
 }
