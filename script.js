@@ -21,7 +21,7 @@ const countBtn = document.getElementById('countBtn');
 // const generateBtn = document.getElementById('generateBtn');
 const howManyBtn = document.getElementById('howManyBtn');
 // const goBtn = document.getElementById('goBtn');
-// const addNameBtn = document.getElementById('addNameBtn');
+const addNameBtn = document.getElementById('addNameBtn');
 // const specificBtn = document.getElementById('specificBtn');
 // const categoriesBtn = document.getElementById('categoriesBtn');
 
@@ -30,12 +30,13 @@ const howManyBtn = document.getElementById('howManyBtn');
 listUlElement.addEventListener('click', (e) => {
     const targetEventBtnId = e.target.previousElementSibling.id;
     const targetEventInputId = e.target.previousElementSibling.children[0].id;
-    console.log(e.target.previousElementSibling.children[0].id)
+    console.log(targetEventInputId)
     if (targetEventBtnId === 'countBtn') getCountNumber();
     if (targetEventBtnId === 'categoriesBtn') getCategories();
     if (targetEventBtnId === 'generateBtn') generateRandomJoke();
     if (targetEventBtnId === 'generateLatestBtn') generateLatestJoke();
     if (targetEventInputId === 'howManyBtn') getJokesAsDemand();
+    if (targetEventInputId === 'addNameBtn') addNameInJokes();
 })
 
 
@@ -97,4 +98,12 @@ async function getJokesAsDemand() {
         `);
     })
     display.innerHTML = displayJokes.join(' ');
+}
+
+async function addNameInJokes() {
+    const name = addNameBtn.value;
+    const joke = await fetch(`http://api.icndb.com/jokes/random?firstName=${name}`)
+        .then(data => data.json());
+    // console.log(joke.value.joke)
+    display.innerText = joke.value.joke;
 }
