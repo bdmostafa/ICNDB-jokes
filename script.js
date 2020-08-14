@@ -32,6 +32,8 @@ listUlElement.addEventListener('click', (e) => {
     console.log(targetEventId)
     if (targetEventId === 'countBtn') getCountNumber();
     if (targetEventId === 'categoriesBtn') getCategories();
+    if (targetEventId === 'generateBtn') generateRandomJoke();
+    if (targetEventId === 'generateLatestBtn') generateLatestJoke();
 })
 
 
@@ -57,4 +59,21 @@ async function getCategories() {
     display.innerHTML = `Well, the available categories as like below: <strong>${categoriesList.join(', ')}</strong>`;
     // strong tag does not work ====================
 
+}
+
+async function generateRandomJoke() {
+    const randomJokes = await fetch('https://api.icndb.com/jokes/random')
+        .then(data => data.json());
+    // console.log(randomJokes)
+    display.innerText = randomJokes.value.joke;
+}
+
+async function generateLatestJoke() {
+    const latestJokes = await fetch('http://api.icndb.com/jokes/latest')
+        .then(data => data.json());
+    console.log(latestJokes.value.length)
+    // As there are many value, generate random between value.length
+    let randomNum = Math.floor(Math.random() * (latestJokes.value.length - 0 + 1)) + 0;
+    // console.log(randomNum)
+    display.innerText = latestJokes.value[randomNum].joke;
 }
