@@ -6,6 +6,8 @@
 // http://api.icndb.com/jokes/count - count jokes in number
 // http://api.icndb.com/categories
 
+// http://api.icndb.com/jokes/latest
+
 // http://api.icndb.com/jokes/random?limitTo=[nerdy]
 // http://api.icndb.com/jokes/random?limitTo=[nerdy,explicit]
 
@@ -15,33 +17,44 @@
 // Selectors
 const display = document.getElementById('display');
 const listUlElement = document.querySelector('.action-list');
+const countBtn = document.getElementById('countBtn');
 // const generateBtn = document.getElementById('generateBtn');
 // const howManyBtn = document.getElementById('howManyBtn');
 // const goBtn = document.getElementById('goBtn');
 // const addNameBtn = document.getElementById('addNameBtn');
 // const specificBtn = document.getElementById('specificBtn');
 // const categoriesBtn = document.getElementById('categoriesBtn');
-// const countBtn = document.getElementById('countBtn');
+
 
 // Event Listeners
-generateBtn.addEventListener('click', getRandomJokes);
-// goBtn.addEventListener('click', getJokesAsNumber);
+listUlElement.addEventListener('click', (e) => {
+    const targetEventId = e.target.previousElementSibling.id
+    console.log(targetEventId)
+    if (targetEventId === 'countBtn') getCountNumber();
+    if (targetEventId === 'categoriesBtn') getCategories();
+})
 
 
 
 
 // Functions
-async function getRandomJokes() {
-    const joke = await fetch('https://api.icndb.com/jokes/random')
-        .then(data => data.json())
-    // console.log(joke.value.joke)
-    display.innerText = joke.value.joke
+async function getCountNumber() {
+    const count = await fetch('http://api.icndb.com/jokes/count')
+        .then(data => data.json());
+    // console.log(count.value)
+    // console.log(display)
+    display.innerText = `Well, there are almost ${count.value} Jokes on live. Wow...!`;
 }
-console.log(howManyBtn.value)
 
-async function getJokesAsNumber(howManyBtn) {
-
-    const joke = await fetch(`https://api.icndb.com/jokes/random/${howManyBtn}`)
-        .then(data => data.json())
+async function getCategories() {
+    const categories = await fetch('http://api.icndb.com/categories')
+        .then(data => data.json());
+    // console.log(categories.value.length)
+    let categoriesList = [];
+    categories.value.forEach(category => {
+        categoriesList.push(category)
+    })
+    display.innerHTML = `Well, the available categories as like below: <strong>${categoriesList.join(', ')}</strong>`;
+    // strong tag does not work ====================
 
 }
