@@ -8,7 +8,8 @@ body {
     font-family: 'Courier New', Courier, monospace;
 }
 
-h1 {
+h1,
+span {
     color: #11a032;
     font-weight: bold;
 }
@@ -73,26 +74,6 @@ footer a {
 
 .action-item {
     padding: .25rem .75rem;
-}
-
-.search-btn {
-    background: rgb(3, 185, 100);
-    color: white;
-    border: none;
-    padding: 0.75rem;
-    font-size: 1.25rem;
-    cursor: pointer;
-    transition: all 0.3s ease-in-out;
-    /* margin-left: 5px; */
-}
-
-.search-btn:hover {
-    color: #28a745;
-    background: white;
-}
-
-.fa-search {
-    pointer-events: none;
 }
 
 .input {

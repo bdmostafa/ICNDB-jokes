@@ -1,3 +1,4 @@
+// These APIs are used here =============================================
 // https://api.icndb.com/jokes/random
 // https://api.icndb.com/jokes/random/5 - numbers of jokes at a time
 // http://api.icndb.com/jokes/random?firstName=John&amp;lastName=Doe
@@ -12,54 +13,56 @@
 // http://api.icndb.com/jokes/random?limitTo=[nerdy,explicit]
 
 // http://api.icndb.com/jokes/random?exclude=[nerdy]
-// http: //api.icndb.com/jokes/random?exclude=[nerdy,explicit]
+// http://api.icndb.com/jokes/random?exclude=[nerdy,explicit]
 
-// Selectors
+
+
+// Selectors ==============================================================
 const display = document.getElementById('display');
 const listUlElement = document.querySelector('.action-list');
-const countBtn = document.getElementById('countBtn');
-const categoriesBtn = document.getElementById('categoriesBtn');
-const generateBtn = document.getElementById('generateBtn');
-const generateLatestBtn = document.getElementById('generateLatestBtn')
-const howManyBtn = document.getElementById('howManyBtn');
-const addNameBtn = document.getElementById('addNameBtn');
-const specificBtn = document.getElementById('specificBtn');
+
+// const countBtn = document.getElementById('countBtn');
+// const categoriesBtn = document.getElementById('categoriesBtn');
+// const generateBtn = document.getElementById('generateBtn');
+// const generateLatestBtn = document.getElementById('generateLatestBtn')
+// const howManyBtn = document.getElementById('howManyBtn');
+// const addNameBtn = document.getElementById('addNameBtn');
+// const specificBtn = document.getElementById('specificBtn');
 
 
 
-// Event Listeners
-// listUlElement.addEventListener('click', (e) => {
-//     const targetEventBtnId = e.target.previousElementSibling.id;
-//     // console.log(targetEventBtnId)
-//     const targetEventInputId = e.target.previousElementSibling.children[0].id;
-//     // console.log(targetEventInputId)
-//     if (targetEventBtnId === 'countBtn') getCountNumber();
-//     if (targetEventBtnId === 'categoriesBtn') getCategories();
-//     if (targetEventBtnId === 'generateBtn') generateRandomJoke();
-//     if (targetEventBtnId === 'generateLatestBtn') generateLatestJoke();
-//     if (targetEventInputId === 'howManyBtn') getMultipleJokesAsDemand();
-//     if (targetEventInputId === 'addNameBtn') addNameInJokes();
-//     if (targetEventInputId === 'specificBtn') getSpecificJoke();
-// })
+// Event Listeners ======================================================
 
-countBtn.addEventListener('click', getCountNumber);
-categoriesBtn.addEventListener('click', getCategories);
-generateBtn.addEventListener('click', generateRandomJoke);
-generateLatestBtn.addEventListener('click', generateLatestJoke);
-addNameBtn.addEventListener('click', addNameInJokes);
-howManyBtn.addEventListener('click', getMultipleJokesAsDemand);
-specificBtn.addEventListener('click', getSpecificJoke);
+// countBtn.addEventListener('click', getCountNumber);
+// categoriesBtn.addEventListener('click', getCategories);
+// generateBtn.addEventListener('click', generateRandomJoke);
+// generateLatestBtn.addEventListener('click', generateLatestJoke);
+// addNameBtn.addEventListener('click', addNameInJokes);
+// howManyBtn.addEventListener('click', getMultipleJokesAsDemand);
+// specificBtn.addEventListener('click', getSpecificJoke);
 
-
+// Another way to event listeners to avoid multiple addEventListener and selectors
+listUlElement.addEventListener('click', (e) => {
+    const targetedId = e.target.id;
+    // console.log(targetedId)
+    if (targetedId === 'countBtn') getCountNumber();
+    if (targetedId === 'categoriesBtn') getCategories();
+    if (targetedId === 'generateBtn') generateRandomJoke();
+    if (targetedId === 'generateLatestBtn') generateLatestJoke();
+    if (targetedId === 'howManyBtn') getMultipleJokesAsDemand();
+    if (targetedId === 'addNameBtn') addNameInJokes();
+    if (targetedId === 'specificBtn') getSpecificJoke();
+})
 
 
-// Functions
+// Functions =============================================================
+
 // asyncHandler function to avoid repeat 'try/catch'
 async function asyncHandler(fn) {
     try {
         await fn()
-    } catch (err) {
-        display.innerText = `${err.message}. Please input what you need `
+    } catch {
+        display.innerText = `Oops! Please input in a right way.`
     }
 }
 
@@ -69,19 +72,22 @@ function getCountNumber() {
         async () => {
             const data = await fetch('http://api.icndb.com/jokes/count');
             const count = await data.json();
-            display.innerText = `Well, there are almost ${count.value} Jokes on live. Wow...!`;
+            display.innerHTML = `Well, there are almost <span> ${count.value} </span>Jokes on live right now. Wow...!`;
         }
     )
 }
 
-// function getCountNumber() {
-//     return async function asyncHandler() {
+// Avoid this below type function using asyncHandler()
+// async function getCountNumber() {
+//     try {
 //         const data = await fetch('http://api.icndb.com/jokes/count')
 //         const count = await data.json();
 //         // .then(data => data.json());
 //         // console.log(count.value)
 //         // console.log(display)
 //         display.innerText = `Well, there are almost ${count.value} Jokes on live. Wow...!`;
+//     } catch (err) {
+//         console.log(err.message)
 //     }
 // }
 
@@ -96,7 +102,7 @@ function getCategories() {
             categories.value.forEach(category => {
                 categoriesList.push(category)
             })
-            display.innerHTML = `Well, the available categories as like below: <strong>${categoriesList.join(', ')}</strong>`;
+            display.innerHTML = `Well, the available categories as like below: <span>${categoriesList.join(', ')}</span>`;
             // strong tag does not work ====================
         }
     )
@@ -133,22 +139,21 @@ function generateLatestJoke() {
 function getMultipleJokesAsDemand() {
     return asyncHandler(
         async () => {
-            // console.log(howManyBtn.value)
-            const value = howManyBtn.value;
+            const value = Number(prompt('Please input only a number how many jokes at a time you want to see', 5))
             const data = await fetch(`https://api.icndb.com/jokes/random/${value}`)
-            const jokes = data.json();
+            const jokes = await data.json();
             // console.log(jokes.value[0].joke);
             let displayJokes = [];
             // Display all the jokes with serial index no
             jokes.value.forEach((joke, index) => {
                 displayJokes.push(`
-        Joke: ${index + 1}
-        <br>
-        ${joke.joke}
-        <hr>
-        `);
+                    <span>Joke: ${index + 1}</span>
+                    <br>
+                    ${joke.joke}
+                    <hr>
+                `);
             })
-            display.innerHTML = displayJokes.join(' ');
+            display.innerHTML = displayJokes.join(' '); // join(' ') is used to avoid comma (,)
         }
     )
 }
@@ -157,9 +162,9 @@ function getMultipleJokesAsDemand() {
 function addNameInJokes() {
     return asyncHandler(
         async () => {
-            const youName = addNameBtn.value;
-            const data = await fetch(`http://api.icndb.com/jokes/random?firstName=${youName}`)
-            const jokeObj = data.json();
+            const yourName = prompt('Please input your name to see it in the jokes as a main character', 'Mostafa');
+            const data = await fetch(`http://api.icndb.com/jokes/random?firstName=${yourName}`)
+            const jokeObj = await data.json();
             // console.log(joke.value.joke)
             display.innerText = jokeObj.value.joke;
         }
@@ -170,9 +175,9 @@ function addNameInJokes() {
 function getSpecificJoke() {
     return asyncHandler(
         async () => {
-            const jokeNo = specificBtn.value;
+            const jokeNo = Number(prompt('Please input only a number to see a specific joke related to this number', 27));
             const data = await fetch(`http://api.icndb.com/jokes/${jokeNo}`)
-            const jokeObj = data.json();
+            const jokeObj = await data.json();
             // console.log(joke.value)
             display.innerText = jokeObj.value.joke;
         }
