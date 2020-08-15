@@ -70,7 +70,7 @@ async function asyncHandler(fn) {
 function getCountNumber() {
     return asyncHandler(
         async () => {
-            const data = await fetch('http://api.icndb.com/jokes/count');
+            const data = await fetch('https://api.icndb.com/jokes/count');
             const count = await data.json();
             display.innerHTML = `Well, there are almost <span> ${count.value} </span>Jokes on live right now. Wow...!`;
         }
