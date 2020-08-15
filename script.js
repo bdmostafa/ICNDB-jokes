@@ -95,7 +95,7 @@ function getCountNumber() {
 function getCategories() {
     return asyncHandler(
         async () => {
-            const data = await fetch('http://api.icndb.com/categories')
+            const data = await fetch('https://api.icndb.com/categories')
             const categories = await data.json();
             // console.log(categories.value.length)
             let categoriesList = [];
@@ -124,7 +124,7 @@ function generateRandomJoke() {
 function generateLatestJoke() {
     return asyncHandler(
         async () => {
-            const data = await fetch('http://api.icndb.com/jokes/latest')
+            const data = await fetch('https://api.icndb.com/jokes/latest')
             const latestJokes = await data.json();
             // console.log(latestJokes.value.length)
             // As there are many value, generate random between value.length
@@ -163,7 +163,7 @@ function addNameInJokes() {
     return asyncHandler(
         async () => {
             const yourName = prompt('Please input your name to see it in the jokes as a main character', 'Mostafa');
-            const data = await fetch(`http://api.icndb.com/jokes/random?firstName=${yourName}`)
+            const data = await fetch(`https://api.icndb.com/jokes/random?firstName=${yourName}`)
             const jokeObj = await data.json();
             // console.log(joke.value.joke)
             display.innerText = jokeObj.value.joke;
@@ -176,7 +176,7 @@ function getSpecificJoke() {
     return asyncHandler(
         async () => {
             const jokeNo = Number(prompt('Please input only a number to see a specific joke related to this number', 27));
-            const data = await fetch(`http://api.icndb.com/jokes/${jokeNo}`)
+            const data = await fetch(`https://api.icndb.com/jokes/${jokeNo}`)
             const jokeObj = await data.json();
             // console.log(joke.value)
             display.innerText = jokeObj.value.joke;
