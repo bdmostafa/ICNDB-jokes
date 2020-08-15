@@ -37,7 +37,7 @@ const specificBtn = document.getElementById('specificBtn');
 //     if (targetEventBtnId === 'categoriesBtn') getCategories();
 //     if (targetEventBtnId === 'generateBtn') generateRandomJoke();
 //     if (targetEventBtnId === 'generateLatestBtn') generateLatestJoke();
-//     if (targetEventInputId === 'howManyBtn') getJokesAsDemand();
+//     if (targetEventInputId === 'howManyBtn') getMultipleJokesAsDemand();
 //     if (targetEventInputId === 'addNameBtn') addNameInJokes();
 //     if (targetEventInputId === 'specificBtn') getSpecificJoke();
 // })
@@ -47,82 +47,134 @@ categoriesBtn.addEventListener('click', getCategories);
 generateBtn.addEventListener('click', generateRandomJoke);
 generateLatestBtn.addEventListener('click', generateLatestJoke);
 addNameBtn.addEventListener('click', addNameInJokes);
-howManyBtn.addEventListener('click', getJokesAsDemand);
+howManyBtn.addEventListener('click', getMultipleJokesAsDemand);
 specificBtn.addEventListener('click', getSpecificJoke);
 
 
 
 
 // Functions
-async function getCountNumber() {
-    const count = await fetch('http://api.icndb.com/jokes/count')
-        .then(data => data.json());
-    // console.log(count.value)
-    // console.log(display)
-    display.innerText = `Well, there are almost ${count.value} Jokes on live. Wow...!`;
+// asyncHandler function to avoid repeat 'try/catch'
+async function asyncHandler(fn) {
+    try {
+        await fn()
+    } catch (err) {
+        display.innerText = `${err.message}. Please input what you need `
+    }
 }
 
-async function getCategories() {
-    const categories = await fetch('http://api.icndb.com/categories')
-        .then(data => data.json());
-    // console.log(categories.value.length)
-    let categoriesList = [];
-    categories.value.forEach(category => {
-        categoriesList.push(category)
-    })
-    display.innerHTML = `Well, the available categories as like below: <strong>${categoriesList.join(', ')}</strong>`;
-    // strong tag does not work ====================
-
+// Get the total number of jokes
+function getCountNumber() {
+    return asyncHandler(
+        async () => {
+            const data = await fetch('http://api.icndb.com/jokes/count');
+            const count = await data.json();
+            display.innerText = `Well, there are almost ${count.value} Jokes on live. Wow...!`;
+        }
+    )
 }
 
-async function generateRandomJoke() {
-    const randomJokes = await fetch('https://api.icndb.com/jokes/random')
-        .then(data => data.json());
-    // console.log(randomJokes)
-    display.innerText = randomJokes.value.joke;
+// function getCountNumber() {
+//     return async function asyncHandler() {
+//         const data = await fetch('http://api.icndb.com/jokes/count')
+//         const count = await data.json();
+//         // .then(data => data.json());
+//         // console.log(count.value)
+//         // console.log(display)
+//         display.innerText = `Well, there are almost ${count.value} Jokes on live. Wow...!`;
+//     }
+// }
+
+// Get the jokes categories
+function getCategories() {
+    return asyncHandler(
+        async () => {
+            const data = await fetch('http://api.icndb.com/categories')
+            const categories = await data.json();
+            // console.log(categories.value.length)
+            let categoriesList = [];
+            categories.value.forEach(category => {
+                categoriesList.push(category)
+            })
+            display.innerHTML = `Well, the available categories as like below: <strong>${categoriesList.join(', ')}</strong>`;
+            // strong tag does not work ====================
+        }
+    )
 }
 
-async function generateLatestJoke() {
-    const latestJokes = await fetch('http://api.icndb.com/jokes/latest')
-        .then(data => data.json());
-    // console.log(latestJokes.value.length)
-    // As there are many value, generate random between value.length
-    let randomNum = Math.floor(Math.random() * (latestJokes.value.length - 0 + 1)) + 0;
-    // console.log(randomNum)
-    display.innerText = latestJokes.value[randomNum].joke;
+// Get single random jokes
+function generateRandomJoke() {
+    return asyncHandler(
+        async () => {
+            const data = await fetch('https://api.icndb.com/jokes/random')
+            const randomJokes = await data.json();
+            // console.log(randomJokes)
+            display.innerText = randomJokes.value.joke;
+        }
+    )
 }
 
-async function getJokesAsDemand() {
-    // console.log(howManyBtn.value)
-    const value = howManyBtn.value;
-    const jokes = await fetch(`https://api.icndb.com/jokes/random/${value}`)
-        .then(data => data.json());
-    // console.log(jokes.value[0].joke);
-    let displayJokes = [];
-    // Display all the jokes with serial index no
-    jokes.value.forEach((joke, index) => {
-        displayJokes.push(`
+// Get latest joke
+function generateLatestJoke() {
+    return asyncHandler(
+        async () => {
+            const data = await fetch('http://api.icndb.com/jokes/latest')
+            const latestJokes = await data.json();
+            // console.log(latestJokes.value.length)
+            // As there are many value, generate random between value.length
+            let randomNum = Math.floor(Math.random() * (latestJokes.value.length - 0 + 1)) + 0;
+            // console.log(randomNum)
+            display.innerText = latestJokes.value[randomNum].joke;
+        }
+    )
+}
+
+// Get multiple jokes at a time
+function getMultipleJokesAsDemand() {
+    return asyncHandler(
+        async () => {
+            // console.log(howManyBtn.value)
+            const value = howManyBtn.value;
+            const data = await fetch(`https://api.icndb.com/jokes/random/${value}`)
+            const jokes = data.json();
+            // console.log(jokes.value[0].joke);
+            let displayJokes = [];
+            // Display all the jokes with serial index no
+            jokes.value.forEach((joke, index) => {
+                displayJokes.push(`
         Joke: ${index + 1}
         <br>
         ${joke.joke}
         <hr>
         `);
-    })
-    display.innerHTML = displayJokes.join(' ');
+            })
+            display.innerHTML = displayJokes.join(' ');
+        }
+    )
 }
 
-async function addNameInJokes() {
-    const youName = addNameBtn.value;
-    const joke = await fetch(`http://api.icndb.com/jokes/random?firstName=${youName}`)
-        .then(data => data.json());
-    // console.log(joke.value.joke)
-    display.innerText = joke.value.joke;
+// Get your name in the joke
+function addNameInJokes() {
+    return asyncHandler(
+        async () => {
+            const youName = addNameBtn.value;
+            const data = await fetch(`http://api.icndb.com/jokes/random?firstName=${youName}`)
+            const jokeObj = data.json();
+            // console.log(joke.value.joke)
+            display.innerText = jokeObj.value.joke;
+        }
+    )
 }
 
-async function getSpecificJoke() {
-    const jokeNo = specificBtn.value;
-    const joke = await fetch(`http://api.icndb.com/jokes/${jokeNo}`)
-        .then(data => data.json());
-    // console.log(joke.value)
-    display.innerText = joke.value.joke;
+// Get a specific joke with no.
+function getSpecificJoke() {
+    return asyncHandler(
+        async () => {
+            const jokeNo = specificBtn.value;
+            const data = await fetch(`http://api.icndb.com/jokes/${jokeNo}`)
+            const jokeObj = data.json();
+            // console.log(joke.value)
+            display.innerText = jokeObj.value.joke;
+        }
+    )
 }
